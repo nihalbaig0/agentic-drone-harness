@@ -86,8 +86,11 @@ surface, and the agent brief forbids it.
 
 **Claude Code.** Start `claude` in `drone-sim/`, hand it
 [`CLAUDE_AGENT_BRIEF.md`](CLAUDE_AGENT_BRIEF.md), and click *Assign episode
-to Claude Code*. Its actions and one-line reasoning are recorded at the
-harness boundary. Claude Code's internal model calls cannot be proxied, so it
+to Claude Code*. To have every assignment flown automatically, run
+`node tools/claude_supervisor.mjs`: it polls the server and starts a fresh
+headless `claude -p` session pinned to each new assigned episode, one at a
+time (add `--backlog` to also fly older unflown assignments). Its actions and
+one-line reasoning are recorded at the harness boundary. Claude Code's internal model calls cannot be proxied, so it
 serves as teacher or reference, not as the RL student.
 
 **An open model (the paper's setting).** Serve the student with vLLM, put the
@@ -156,6 +159,7 @@ sim/recorder.mjs        JSONL run storage
 planners/scripted.mjs   stochastic reference planner (both harnesses)
 planners/llm_planner.mjs  OpenAI-compatible planner (tools or code blocks)
 tools/rollout.mjs       headless group rollouts -> summary + RL samples
+tools/claude_supervisor.mjs  flies every viewer assignment with a fresh Claude Code session
 public/                 three.js spectator viewer
 test/                   node:test unit + HTTP integration tests
 ```
