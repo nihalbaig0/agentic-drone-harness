@@ -246,8 +246,12 @@ function fmtFeedback(fb) {
 
 function renderCalls(calls) {
   const ol = document.getElementById("callLog");
-  if (!calls.length && !ol.children.length) {
-    ol.innerHTML = `<li class="empty">No planner calls yet.</li>`;
+  if (!calls.length) {
+    // Assigning only creates the episode; a planner has to pick it up.
+    const waiting = watch.summary?.planner === "claude-code" && watch.summary?.status === "running";
+    ol.innerHTML = waiting
+      ? `<li class="empty">Waiting for Claude Code to pick this episode up. In a terminal: <code>cd drone-sim &amp;&amp; claude</code>, then ask it to follow <code>CLAUDE_AGENT_BRIEF.md</code>. It polls <code>/api/assignment</code> and its calls appear here.</li>`
+      : `<li class="empty">No planner calls yet.</li>`;
     return;
   }
   if (watch.callsShown === 0) ol.innerHTML = "";
